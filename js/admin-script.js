@@ -5,13 +5,62 @@ const exchangeRate = 4200;
 let currentImageData = null;
 
 // Inicialización
+// Verificación de autenticación al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
+    // Verificar autenticación antes de cargar el admin
+    if (!isAdminAuthenticated()) {
+        window.location.href = 'admin-login.html';
+        return;
+    }
+    
     setupEventListeners();
     loadDashboard();
     loadProductsTable();
     updateStats();
     setupImageUpload();
+    addLogoutButton();
 });
+
+// Función para verificar autenticación
+function isAdminAuthenticated() {
+    const sessionData = localStorage.getItem('admin_session');
+    
+    if (!sessionData) {
+        return false;
+    }
+    
+    try {
+        const session = JSON.parse(sessionData);
+        const now = Date.now();
+        
+        if (now > session.expires) {
+            localStorage.removeItem('admin_session');
+            return false;
+        }
+        
+        return session.authenticated === true;
+    } catch (error) {
+        localStorage.removeItem('admin_session');
+        return false;
+    }
+}
+
+// Agregar botón de logout
+function addLogoutButton() {
+    const adminActions = document.querySelector('.admin-actions');
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'btn-secondary';
+    logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
+    logoutBtn.onclick = function() {
+        if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+            localStorage.removeItem('admin_session');
+            localStorage.removeItem('admin_remember');
+            window.location.href = 'admin-login.html';
+        }
+    };
+    
+    adminActions.appendChild(logoutBtn);
+}
 
 // Event Listeners
 function setupEventListeners() {

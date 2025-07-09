@@ -275,13 +275,31 @@ body {
     transform: translateY(-2px);
 }
 
+/* Estilos para botón de logout */
 .btn-secondary {
     background: #6c757d;
     color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
 }
 
 .btn-secondary:hover {
     background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* Modal */
