@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Suvenil</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-tshirt"></i> Suvenil</h2>
+                <p>Panel de Admin</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#dashboard" class="nav-link active"><i class="fas fa-chart-dashboard"></i> Dashboard</a></li>
+                    <li><a href="#products" class="nav-link"><i class="fas fa-box"></i> Productos</a></li>
+                    <li><a href="#orders" class="nav-link"><i class="fas fa-shopping-cart"></i> Pedidos</a></li>
+                    <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Volver a la Tienda</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <h1>Panel de Administración</h1>
+                <div class="admin-actions">
+                    <button class="btn-primary" id="addProductBtn">
+                        <i class="fas fa-plus"></i> Agregar Producto
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalProducts">0</h3>
+                            <p>Total Productos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalOrders">0</h3>
+                            <p>Pedidos Realizados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">$0</h3>
+                            <p>Ingresos Totales</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products-section" class="content-section">
+                <div class="section-header">
+                    <h2>Gestión de Productos</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchProducts" placeholder="Buscar productos...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="products-table-container">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio (USD)</th>
+                                <th>Precio (COP)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Los productos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders-section" class="content-section">
+                <div class="section-header">
+                    <h2>Historial de Pedidos</h2>
+                </div>
+                <div class="orders-container" id="ordersContainer">
+                    <p class="no-orders">No hay pedidos registrados aún.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Agregar Producto</h2>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productName">Nombre del Producto</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Categoría</label>
+                        <select id="productCategory" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="hombre">Hombre</option>
+                            <option value="mujer">Mujer</option>
+                            <option value="accesorios">Accesorios</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Precio en USD</label>
+                        <input type="number" id="productPrice" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">URL de la Imagen</label>
+                        <input type="url" id="productImage" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Descripción</label>
+                        <textarea id="productDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelBtn">Cancelar</button>
+                <button type="submit" class="btn-primary" id="saveProductBtn">Guardar Producto</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

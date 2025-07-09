@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suvenil - Tienda de Ropa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1><i class="fas fa-tshirt"></i> Suvenil</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#about">Nosotros</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                    <li><a href="admin.html" class="admin-link"><i class="fas fa-cog"></i> Admin</a></li>
+                </ul>
+                <div class="nav-icons">
+                    <div class="currency-toggle">
+                        <button id="currencyBtn" class="currency-btn">
+                            <span id="currencyText">USD</span>
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
+                    <div class="cart-icon" id="cartIcon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </div>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <!-- Video Background -->
+        <div class="video-background">
+            <video autoplay muted loop playsinline class="hero-video">
+                <source src="video/My Video.mp4" type="video/mp4">
+                <!-- Fallback para navegadores que no soporten el video -->
+                Tu navegador no soporta videos HTML5.
+            </video>
+            <!-- Overlay para mejorar legibilidad del texto -->
+            <div class="video-overlay"></div>
+        </div>
+        
+        <!-- Contenido sobre el video -->
+        <div class="hero-content">
+            <h1 class="hero-title">Moda que Define tu Estilo</h1>
+            <p class="hero-subtitle">Descubre las últimas tendencias en ropa con la mejor calidad y precios increíbles</p>
+            <button class="cta-button" onclick="document.getElementById('products').scrollIntoView()">Ver Colección</button>
+        </div>
+        
+        <!-- Controles de video opcionales -->
+        <div class="video-controls">
+            <button class="video-control-btn" id="playPauseBtn">
+                <i class="fas fa-pause"></i>
+            </button>
+            <button class="video-control-btn" id="muteBtn">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <h2 class="section-title">Nuestros Productos</h2>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="hombre">Hombre</button>
+                <button class="filter-btn" data-filter="mujer">Mujer</button>
+                <button class="filter-btn" data-filter="accesorios">Accesorios</button>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Los productos se cargarán dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Carrito de Compras</h2>
+                <span class="close" id="closeCart">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <h3>Total: <span id="cartTotal">$0</span></h3>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="clearCart">Vaciar Carrito</button>
+                <button class="btn-primary" id="checkoutBtn">Realizar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Suvenil</h3>
+                    <p>Tu tienda de confianza para la mejor moda</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="#home">Inicio</a></li>
+                        <li><a href="#products">Productos</a></li>
+                        <li><a href="#about">Nosotros</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-envelope"></i> info@fashionstore.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">Nosotros</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="about-intro">
+                        <h3>Bienvenidos a Suvenil</h3>
+                        <p class="lead">Somos una tienda de ropa comprometida con ofrecerte las últimas tendencias en moda con la mejor calidad y precios accesibles.</p>
+                    </div>
+                    
+                    <div class="about-story">
+                        <h4><i class="fas fa-heart"></i> Nuestra Historia</h4>
+                        <p>Fundada en 2020, Suvenil nació de la pasión por la moda y el deseo de hacer que la ropa de calidad sea accesible para todos. Comenzamos como un pequeño emprendimiento familiar y hemos crecido hasta convertirnos en una tienda de confianza para miles de clientes.</p>
+                    </div>
+                    
+                    <div class="about-mission">
+                        <h4><i class="fas fa-star"></i> Nuestra Misión</h4>
+                        <p>Ofrecer ropa de alta calidad que refleje tu personalidad y estilo único, manteniendo siempre precios justos y un servicio al cliente excepcional. Creemos que la moda debe ser inclusiva y accesible para todos.</p>
+                    </div>
+                    
+                    <div class="about-values">
+                        <h4><i class="fas fa-gem"></i> Nuestros Valores</h4>
+                        <ul class="values-list">
+                            <li><strong>Calidad:</strong> Seleccionamos cuidadosamente cada prenda para garantizar durabilidad y comodidad.</li>
+                            <li><strong>Estilo:</strong> Seguimos las últimas tendencias para ofrecerte looks modernos y actuales.</li>
+                            <li><strong>Servicio:</strong> Tu satisfacción es nuestra prioridad, brindamos atención personalizada.</li>
+                            <li><strong>Confianza:</strong> Construimos relaciones duraderas basadas en la transparencia y honestidad.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number">5,000+</div>
+                        <div class="stat-label">Clientes Satisfechos</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <div class="stat-number">10,000+</div>
+                        <div class="stat-label">Prendas Vendidas</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Años de Experiencia</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="stat-number">24h</div>
+                        <div class="stat-label">Envío Rápido</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-section">
+                <h3>Nuestro Equipo</h3>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-photo">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face" alt="Carlos Mendoza">
+                        </div>
+                        <div class="member-info">
+                            <h4>Carlos Mendoza</h4>
+                            <p class="member-role">Fundador & CEO</p>
+                            <p class="member-description">Visionario de la moda con más de 10 años de experiencia en el sector textil.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="member-photo">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face" alt="Ana García">
+                        </div>
+                        <div class="member-info">
+                            <h4>Ana García</h4>
+                            <p class="member-role">Directora de Diseño</p>
+                            <p class="member-description">Experta en tendencias de moda y diseño, encargada de la selección de productos.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="member-photo">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" alt="Miguel Torres">
+                        </div>
+                        <div class="member-info">
+                            <h4>Miguel Torres</h4>
+                            <p class="member-role">Gerente de Ventas</p>
+                            <p class="member-description">Especialista en atención al cliente y estrategias de ventas digitales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-cta">
+                <h3>¿Tienes alguna pregunta?</h3>
+                <p>Estamos aquí para ayudarte. Contáctanos y te responderemos lo antes posible.</p>
+                <div class="cta-buttons">
+                    <a href="#contact" class="btn-primary">Contáctanos</a>
+                    <a href="https://wa.me/573001234567" class="btn-whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
