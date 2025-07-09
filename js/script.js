@@ -372,7 +372,7 @@ function checkout() {
     
     message += `\n\n📱 *Enviado desde Suvenil*`;
     
-    const phoneNumber = '573001234567';
+    const phoneNumber = '573044386586';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
     window.open(whatsappUrl, '_blank');
