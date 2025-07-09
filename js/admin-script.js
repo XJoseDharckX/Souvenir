@@ -2,6 +2,7 @@
 let products = JSON.parse(localStorage.getItem('products')) || [];
 let editingProductId = null;
 const exchangeRate = 4200;
+let currentImageData = null;
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDashboard();
     loadProductsTable();
     updateStats();
+    setupImageUpload();
 });
 
 // Event Listeners
@@ -44,6 +46,108 @@ function setupEventListeners() {
             closeModal();
         }
     });
+}
+
+// Configurar eventos de subida de imágenes
+function setupImageUpload() {
+    const fileInput = document.getElementById('productImageFile');
+    const uploadArea = document.getElementById('fileUploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeImageBtn = document.getElementById('removeImage');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // Cambio de tabs
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabName = this.dataset.tab;
+            
+            // Actualizar botones
+            tabBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Actualizar contenido
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Limpiar datos
+            currentImageData = null;
+            imagePreview.style.display = 'none';
+            document.getElementById('productImageUrl').value = '';
+        });
+    });
+    
+    // Click en área de subida
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    });
+    
+    // Selección de archivo
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+    
+    // Remover imagen
+    removeImageBtn.addEventListener('click', () => {
+        currentImageData = null;
+        imagePreview.style.display = 'none';
+        fileInput.value = '';
+    });
+}
+
+// Manejar selección de archivo
+function handleFileSelect(file) {
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido.');
+        return;
+    }
+    
+    // Validar tamaño (5MB máximo)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('El archivo es demasiado grande. Máximo 5MB.');
+        return;
+    }
+    
+    // Leer archivo
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        currentImageData = e.target.result;
+        
+        // Mostrar preview
+        const previewImg = document.getElementById('previewImg');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        previewImg.src = currentImageData;
+        imagePreview.style.display = 'block';
+    };
+    
+    reader.readAsDataURL(file);
 }
 
 // Navigation
@@ -117,9 +221,17 @@ function loadProductsTable() {
 // Product Modal Functions
 function openAddProductModal() {
     editingProductId = null;
+    currentImageData = null;
     document.getElementById('modalTitle').textContent = 'Agregar Producto';
     document.getElementById('productForm').reset();
+    document.getElementById('imagePreview').style.display = 'none';
     document.getElementById('productModal').style.display = 'block';
+    
+    // Resetear tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelector('.tab-btn[data-tab="upload"]').classList.add('active');
+    document.getElementById('upload-tab').classList.add('active');
 }
 
 function editProduct(productId) {
@@ -133,8 +245,30 @@ function editProduct(productId) {
     document.getElementById('productName').value = product.name;
     document.getElementById('productCategory').value = product.category;
     document.getElementById('productPrice').value = product.priceUSD;
-    document.getElementById('productImage').value = product.image;
     document.getElementById('productDescription').value = product.description || '';
+    
+    // Manejar imagen existente
+    if (product.image.startsWith('data:')) {
+        // Es una imagen en base64
+        currentImageData = product.image;
+        document.getElementById('previewImg').src = product.image;
+        document.getElementById('imagePreview').style.display = 'block';
+        
+        // Activar tab de upload
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelector('.tab-btn[data-tab="upload"]').classList.add('active');
+        document.getElementById('upload-tab').classList.add('active');
+    } else {
+        // Es una URL
+        document.getElementById('productImageUrl').value = product.image;
+        
+        // Activar tab de URL
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelector('.tab-btn[data-tab="url"]').classList.add('active');
+        document.getElementById('url-tab').classList.add('active');
+    }
     
     document.getElementById('productModal').style.display = 'block';
 }
@@ -142,21 +276,34 @@ function editProduct(productId) {
 function closeModal() {
     document.getElementById('productModal').style.display = 'none';
     editingProductId = null;
+    currentImageData = null;
 }
 
 function saveProduct() {
-    const form = document.getElementById('productForm');
-    const formData = new FormData(form);
-    
-    // Validate form
+    // Validar form
     const name = document.getElementById('productName').value.trim();
     const category = document.getElementById('productCategory').value;
     const price = parseFloat(document.getElementById('productPrice').value);
-    const image = document.getElementById('productImage').value.trim();
     const description = document.getElementById('productDescription').value.trim();
     
-    if (!name || !category || !price || !image) {
-        alert('Por favor, completa todos los campos obligatorios.');
+    // Obtener imagen según el tab activo
+    let imageUrl = '';
+    const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+    
+    if (activeTab === 'upload') {
+        if (currentImageData) {
+            imageUrl = currentImageData; // Base64 data URL
+        } else if (editingProductId) {
+            // Mantener imagen existente si está editando
+            const existingProduct = products.find(p => p.id === editingProductId);
+            imageUrl = existingProduct ? existingProduct.image : '';
+        }
+    } else {
+        imageUrl = document.getElementById('productImageUrl').value.trim();
+    }
+    
+    if (!name || !category || !price || !imageUrl) {
+        alert('Por favor, completa todos los campos obligatorios incluyendo la imagen.');
         return;
     }
     
@@ -169,7 +316,7 @@ function saveProduct() {
         name,
         category,
         priceUSD: price,
-        image,
+        image: imageUrl,
         description
     };
     
@@ -182,7 +329,7 @@ function saveProduct() {
     } else {
         // Add new product
         const newProduct = {
-            id: Date.now(), // Simple ID generation
+            id: Date.now(),
             ...productData
         };
         products.push(newProduct);

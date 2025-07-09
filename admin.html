@@ -108,7 +108,7 @@
         </main>
     </div>
 
-    <!-- Product Modal -->
+    <!-- Product Modal con subida de imágenes -->
     <div id="productModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -134,10 +134,41 @@
                         <label for="productPrice">Precio en USD</label>
                         <input type="number" id="productPrice" step="0.01" min="0" required>
                     </div>
+                    
+                    <!-- Sección de imagen mejorada -->
                     <div class="form-group">
-                        <label for="productImage">URL de la Imagen</label>
-                        <input type="url" id="productImage" required>
+                        <label>Imagen del Producto</label>
+                        <div class="image-upload-section">
+                            <div class="upload-tabs">
+                                <button type="button" class="tab-btn active" data-tab="upload">Subir Archivo</button>
+                                <button type="button" class="tab-btn" data-tab="url">URL Externa</button>
+                            </div>
+                            
+                            <!-- Tab de subida de archivo -->
+                            <div class="tab-content active" id="upload-tab">
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <input type="file" id="productImageFile" accept="image/*" hidden>
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Arrastra una imagen aquí o <span class="upload-link">haz clic para seleccionar</span></p>
+                                        <small>Formatos: JPG, PNG, WebP (máx. 5MB)</small>
+                                    </div>
+                                </div>
+                                <div class="image-preview" id="imagePreview" style="display: none;">
+                                    <img id="previewImg" src="" alt="Preview">
+                                    <button type="button" class="remove-image" id="removeImage">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab de URL -->
+                            <div class="tab-content" id="url-tab">
+                                <input type="url" id="productImageUrl" placeholder="https://ejemplo.com/imagen.jpg">
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="form-group">
                         <label for="productDescription">Descripción</label>
                         <textarea id="productDescription" rows="3"></textarea>
