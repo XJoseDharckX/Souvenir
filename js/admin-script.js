@@ -328,6 +328,34 @@ function closeModal() {
     currentImageData = null;
 }
 
+// Función para actualizar products.json
+async function updateProductsFile() {
+    const productsData = {
+        products: products,
+        lastUpdated: new Date().toISOString()
+    };
+    
+    try {
+        // En un entorno real, esto sería una llamada a una API
+        // Por ahora, actualizamos localStorage y mostramos instrucciones
+        localStorage.setItem('products', JSON.stringify(products));
+        localStorage.setItem('productsLastUpdated', productsData.lastUpdated);
+        
+        console.log('Productos actualizados:', productsData);
+        
+        // Mostrar mensaje al admin
+        alert('Producto guardado. Para que se vea en tiempo real para todos los usuarios, actualiza el archivo products.json con los nuevos datos.');
+        
+        // Opcional: mostrar los datos JSON para copiar manualmente
+        console.log('Copia este contenido al archivo products.json:');
+        console.log(JSON.stringify(productsData, null, 2));
+        
+    } catch (error) {
+        console.error('Error actualizando productos:', error);
+    }
+}
+
+// Modificar la función saveProduct existente
 function saveProduct() {
     // Validar form
     const name = document.getElementById('productName').value.trim();
@@ -335,15 +363,13 @@ function saveProduct() {
     const price = parseFloat(document.getElementById('productPrice').value);
     const description = document.getElementById('productDescription').value.trim();
     
-    // Obtener imagen según el tab activo
     let imageUrl = '';
     const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
     
     if (activeTab === 'upload') {
         if (currentImageData) {
-            imageUrl = currentImageData; // Base64 data URL
+            imageUrl = currentImageData;
         } else if (editingProductId) {
-            // Mantener imagen existente si está editando
             const existingProduct = products.find(p => p.id === editingProductId);
             imageUrl = existingProduct ? existingProduct.image : '';
         }
@@ -370,13 +396,11 @@ function saveProduct() {
     };
     
     if (editingProductId) {
-        // Update existing product
         const productIndex = products.findIndex(p => p.id === editingProductId);
         if (productIndex !== -1) {
             products[productIndex] = { ...products[productIndex], ...productData };
         }
     } else {
-        // Add new product
         const newProduct = {
             id: Date.now(),
             ...productData
@@ -384,15 +408,13 @@ function saveProduct() {
         products.push(newProduct);
     }
     
-    // Save to localStorage
-    localStorage.setItem('products', JSON.stringify(products));
+    // Actualizar archivo de productos para sincronización
+    updateProductsFile();
     
-    // Update displays
     loadProductsTable();
     updateStats();
     closeModal();
     
-    // Show success message
     const action = editingProductId ? 'actualizado' : 'agregado';
     alert(`Producto ${action} exitosamente.`);
 }

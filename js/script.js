@@ -1,17 +1,82 @@
 // Variables globales
-let products = JSON.parse(localStorage.getItem('products')) || [];
+let products = [];
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentCurrency = localStorage.getItem('currency') || 'USD';
-const exchangeRate = 4200; // 1 USD = 4200 COP (ajustable)
+const exchangeRate = 4200;
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
-    loadProducts();
+    loadProductsFromServer();
     updateCartCount();
     updateCurrencyDisplay();
     setupEventListeners();
     setupVideoControls();
+    
+    // Verificar actualizaciones cada 30 segundos
+    setInterval(checkForProductUpdates, 30000);
 });
+
+// Cargar productos desde el servidor
+async function loadProductsFromServer() {
+    try {
+        const response = await fetch('products.json');
+        if (response.ok) {
+            const data = await response.json();
+            products = data.products || [];
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('productsLastUpdated', data.lastUpdated);
+        } else {
+            // Fallback a localStorage si no se puede cargar desde servidor
+            loadProductsFromLocalStorage();
+        }
+    } catch (error) {
+        console.log('No se pudo cargar desde servidor, usando datos locales');
+        loadProductsFromLocalStorage();
+    }
+    
+    displayProducts(products);
+}
+
+// Verificar actualizaciones de productos
+async function checkForProductUpdates() {
+    try {
+        const response = await fetch('products.json');
+        if (response.ok) {
+            const data = await response.json();
+            const lastUpdated = localStorage.getItem('productsLastUpdated');
+            
+            if (data.lastUpdated !== lastUpdated) {
+                products = data.products || [];
+                localStorage.setItem('products', JSON.stringify(products));
+                localStorage.setItem('productsLastUpdated', data.lastUpdated);
+                displayProducts(products);
+                console.log('Productos actualizados desde el servidor');
+            }
+        }
+    } catch (error) {
+        console.log('Error verificando actualizaciones:', error);
+    }
+}
+
+// Cargar productos desde localStorage (fallback)
+function loadProductsFromLocalStorage() {
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+        products = JSON.parse(storedProducts);
+    } else {
+        // Productos de ejemplo si no hay nada
+        products = [
+            {
+                id: 1,
+                name: "Camiseta Básica Blanca",
+                category: "hombre",
+                priceUSD: 25,
+                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
+                description: "Camiseta de algodón 100% de alta calidad"
+            }
+        ];
+    }
+}
 
 // Event Listeners
 function setupEventListeners() {
@@ -47,7 +112,7 @@ function toggleCurrency() {
     currentCurrency = currentCurrency === 'USD' ? 'COP' : 'USD';
     localStorage.setItem('currency', currentCurrency);
     updateCurrencyDisplay();
-    loadProducts();
+    displayProducts(products);
     updateCartDisplay();
 }
 
@@ -73,169 +138,7 @@ function getSecondaryPrice(priceUSD) {
     }
 }
 
-// Product functions
-function loadProducts() {
-    const productsGrid = document.getElementById('productsGrid');
-    
-    if (products.length === 0) {
-        // Productos de ejemplo ampliados
-        products = [
-            // Ropa para Hombre
-            {
-                id: 1,
-                name: "Camiseta Básica Blanca",
-                category: "hombre",
-                priceUSD: 25,
-                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
-                description: "Camiseta de algodón 100% de alta calidad, perfecta para el uso diario"
-            },
-            {
-                id: 2,
-                name: "Jeans Clásicos Azules",
-                category: "hombre",
-                priceUSD: 65,
-                image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
-                description: "Jeans de corte clásico y cómodo, ideal para cualquier ocasión"
-            },
-            {
-                id: 3,
-                name: "Camisa Formal Blanca",
-                category: "hombre",
-                priceUSD: 45,
-                image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=400&fit=crop",
-                description: "Camisa formal de algodón para ocasiones especiales"
-            },
-            {
-                id: 4,
-                name: "Polo Deportivo",
-                category: "hombre",
-                priceUSD: 35,
-                image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&h=400&fit=crop",
-                description: "Polo deportivo transpirable, perfecto para actividades físicas"
-            },
-            {
-                id: 5,
-                name: "Chaqueta de Cuero",
-                category: "hombre",
-                priceUSD: 150,
-                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop",
-                description: "Chaqueta de cuero genuino, estilo clásico y duradero"
-            },
-            
-            // Ropa para Mujer
-            {
-                id: 6,
-                name: "Vestido Elegante Negro",
-                category: "mujer",
-                priceUSD: 85,
-                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
-                description: "Vestido elegante para ocasiones especiales y eventos formales"
-            },
-            {
-                id: 7,
-                name: "Blusa Casual Floral",
-                category: "mujer",
-                priceUSD: 45,
-                image: "https://images.unsplash.com/photo-1564257577-2d5d8b0c9c1a?w=400&h=400&fit=crop",
-                description: "Blusa casual con estampado floral, perfecta para el día a día"
-            },
-            {
-                id: 8,
-                name: "Falda Midi Plisada",
-                category: "mujer",
-                priceUSD: 55,
-                image: "https://images.unsplash.com/photo-1583496661160-fb5886a13d77?w=400&h=400&fit=crop",
-                description: "Falda midi plisada, elegante y versátil para múltiples ocasiones"
-            },
-            {
-                id: 9,
-                name: "Jeans Skinny Mujer",
-                category: "mujer",
-                priceUSD: 70,
-                image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop",
-                description: "Jeans skinny de corte moderno y cómodo ajuste"
-            },
-            {
-                id: 10,
-                name: "Blazer Profesional",
-                category: "mujer",
-                priceUSD: 95,
-                image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop",
-                description: "Blazer profesional para el ambiente laboral y reuniones"
-            },
-            {
-                id: 11,
-                name: "Vestido Casual Verano",
-                category: "mujer",
-                priceUSD: 60,
-                image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=400&fit=crop",
-                description: "Vestido casual perfecto para los días de verano"
-            },
-            
-            // Accesorios
-            {
-                id: 12,
-                name: "Reloj Deportivo Digital",
-                category: "accesorios",
-                priceUSD: 120,
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
-                description: "Reloj deportivo resistente al agua con múltiples funciones"
-            },
-            {
-                id: 13,
-                name: "Bolso de Cuero Marrón",
-                category: "accesorios",
-                priceUSD: 95,
-                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
-                description: "Bolso de cuero genuino hecho a mano, elegante y duradero"
-            },
-            {
-                id: 14,
-                name: "Gafas de Sol Aviador",
-                category: "accesorios",
-                priceUSD: 75,
-                image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
-                description: "Gafas de sol estilo aviador con protección UV"
-            },
-            {
-                id: 15,
-                name: "Cinturón de Cuero Negro",
-                category: "accesorios",
-                priceUSD: 40,
-                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
-                description: "Cinturón de cuero negro clásico, versátil y elegante"
-            },
-            {
-                id: 16,
-                name: "Bufanda de Lana",
-                category: "accesorios",
-                priceUSD: 30,
-                image: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&h=400&fit=crop",
-                description: "Bufanda de lana suave, perfecta para el clima frío"
-            },
-            {
-                id: 17,
-                name: "Mochila Urbana",
-                category: "accesorios",
-                priceUSD: 85,
-                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
-                description: "Mochila urbana resistente con múltiples compartimentos"
-            },
-            {
-                id: 18,
-                name: "Collar de Plata",
-                category: "accesorios",
-                priceUSD: 65,
-                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop",
-                description: "Collar de plata elegante con diseño minimalista"
-            }
-        ];
-        localStorage.setItem('products', JSON.stringify(products));
-    }
-    
-    displayProducts(products);
-}
-
+// Mostrar productos con selector de cantidad
 function displayProducts(productsToShow) {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '';
@@ -253,13 +156,99 @@ function displayProducts(productsToShow) {
                     <span class="price-secondary">${getSecondaryPrice(product.priceUSD)}</span>
                 </div>
                 <p class="product-description">${product.description}</p>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">
+                
+                <!-- Selector de cantidad -->
+                <div class="quantity-selector">
+                    <label for="quantity-${product.id}">Cantidad:</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="quantity-btn" onclick="updateProductQuantity(${product.id}, -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="quantity-${product.id}" class="quantity-input" value="1" min="1" max="99">
+                        <button type="button" class="quantity-btn" onclick="updateProductQuantity(${product.id}, 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="add-to-cart" onclick="addToCartWithQuantity(${product.id})">
                     <i class="fas fa-cart-plus"></i> Agregar al Carrito
                 </button>
             </div>
         `;
         productsGrid.appendChild(productCard);
     });
+}
+
+// Actualizar cantidad en selector de producto
+function updateProductQuantity(productId, change) {
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    let currentValue = parseInt(quantityInput.value) || 1;
+    let newValue = currentValue + change;
+    
+    if (newValue < 1) newValue = 1;
+    if (newValue > 99) newValue = 99;
+    
+    quantityInput.value = newValue;
+}
+
+// Agregar al carrito con cantidad específica
+function addToCartWithQuantity(productId) {
+    const product = products.find(p => p.id === productId);
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantity = parseInt(quantityInput.value) || 1;
+    
+    if (!product) return;
+    
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({
+            ...product,
+            quantity: quantity
+        });
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    
+    // Reset quantity selector
+    quantityInput.value = 1;
+    
+    // Animación de feedback
+    const cartIcon = document.getElementById('cartIcon');
+    cartIcon.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        cartIcon.style.transform = 'scale(1)';
+    }, 200);
+    
+    // Mostrar mensaje de confirmación
+    showAddToCartMessage(product.name, quantity);
+}
+
+// Mostrar mensaje de confirmación
+function showAddToCartMessage(productName, quantity) {
+    const message = document.createElement('div');
+    message.className = 'cart-notification';
+    message.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${quantity}x ${productName} agregado al carrito</span>
+    `;
+    
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        message.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(message);
+        }, 300);
+    }, 3000);
 }
 
 function filterProducts(category) {
@@ -271,31 +260,7 @@ function filterProducts(category) {
     }
 }
 
-// Cart functions
-function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({
-            ...product,
-            quantity: 1
-        });
-    }
-    
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    
-    // Animación de feedback
-    const cartIcon = document.getElementById('cartIcon');
-    cartIcon.style.transform = 'scale(1.2)';
-    setTimeout(() => {
-        cartIcon.style.transform = 'scale(1)';
-    }, 200);
-}
-
+// Mantener las funciones del carrito existentes...
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -386,13 +351,9 @@ function checkout() {
         return;
     }
     
-    // Generar código de pedido
     const orderCode = 'SV' + Date.now().toString().slice(-6);
-    
-    // Calcular total
     const total = cart.reduce((sum, item) => sum + (item.priceUSD * item.quantity), 0);
     
-    // Crear mensaje para WhatsApp
     let message = `🛍️ *NUEVO PEDIDO - Suvenil*\n\n`;
     message += `📋 *Código de Pedido:* ${orderCode}\n\n`;
     message += `🛒 *Productos:*\n`;
@@ -411,22 +372,17 @@ function checkout() {
     
     message += `\n\n📱 *Enviado desde Suvenil*`;
     
-    // Número de WhatsApp (cambiar por el número real)
-    const phoneNumber = '573001234567'; // Cambiar por tu número
+    const phoneNumber = '573001234567';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
-    // Abrir WhatsApp
     window.open(whatsappUrl, '_blank');
-    
-    // Limpiar carrito después del pedido
     clearCart();
     closeCart();
     
-    // Mostrar confirmación
     alert(`¡Pedido enviado! Código: ${orderCode}\nSerás redirigido a WhatsApp para completar tu compra.`);
 }
 
-// Smooth scrolling para navegación
+// Resto de funciones existentes (smooth scrolling, header scroll, video controls)...
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -440,7 +396,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Header scroll effect
 window.addEventListener('scroll', function() {
     const header = document.querySelector('.header');
     if (window.scrollY > 100) {
@@ -452,7 +407,6 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// Video Controls
 function setupVideoControls() {
     const video = document.querySelector('.hero-video');
     const playPauseBtn = document.getElementById('playPauseBtn');
@@ -461,7 +415,6 @@ function setupVideoControls() {
     
     if (!video || !playPauseBtn || !muteBtn || !videoControls) return;
     
-    // Control de reproducir/pausar
     playPauseBtn.addEventListener('click', () => {
         if (video.paused) {
             video.play();
@@ -472,7 +425,6 @@ function setupVideoControls() {
         }
     });
     
-    // Control de silenciar/activar sonido
     muteBtn.addEventListener('click', () => {
         video.muted = !video.muted;
         muteBtn.innerHTML = video.muted ? 
@@ -480,7 +432,6 @@ function setupVideoControls() {
             '<i class="fas fa-volume-up"></i>';
     });
     
-    // Auto-ocultar controles
     let hideControlsTimeout;
     
     const showControls = () => {

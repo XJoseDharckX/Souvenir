@@ -1,0 +1,37 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Camiseta Básica Blanca",
+      "category": "hombre",
+      "priceUSD": 25,
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
+      "description": "Camiseta de algodón 100% de alta calidad, perfecta para el uso diario"
+    },
+    {
+      "id": 2,
+      "name": "Jeans Clásicos Azules",
+      "category": "hombre",
+      "priceUSD": 65,
+      "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
+      "description": "Jeans de corte clásico y cómodo, ideal para cualquier ocasión"
+    },
+    {
+      "id": 3,
+      "name": "Vestido Elegante Negro",
+      "category": "mujer",
+      "priceUSD": 85,
+      "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+      "description": "Vestido elegante para ocasiones especiales y eventos formales"
+    },
+    {
+      "id": 4,
+      "name": "Reloj Deportivo Digital",
+      "category": "accesorios",
+      "priceUSD": 120,
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+      "description": "Reloj deportivo resistente al agua con múltiples funciones"
+    }
+  ],
+  "lastUpdated": "2024-01-01T00:00:00.000Z"
+}
